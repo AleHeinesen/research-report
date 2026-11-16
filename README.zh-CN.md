@@ -1,6 +1,6 @@
 # research-report
 
-[English](README.md) | 简体中文
+> **English: [README.md](README.md)** · 以下是中文
 
 把一个**问题**变成一份可核查的报告，而不是一堆网页。
 
