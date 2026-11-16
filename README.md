@@ -1,5 +1,22 @@
 # research-report
 
+English | [简体中文](README.zh-CN.md)
+
+## 中文简介
+
+把一个研究问题变成一份带出处的报告：自己拆子查询、收集 URL、调用抓取引擎，先核对哪些页真的读到了，再把每条结论回查到原文，最后列出没读到的来源。
+
+- **安装**：`git clone` 后 `python install.py`——会连抓取引擎一起装上
+- **用法**：直接向 Agent 提一个需要多源回答的问题
+- **产物**：`out/<slug>/report.md`，含结论、证据表、冲突、覆盖率、未读清单
+- **依赖**：自己没有抓取代码，引擎缺失时安装器会解决
+- **局限**：引用回查由模型执行，不是代码强制
+
+完整中文文档见 [README.zh-CN.md](README.zh-CN.md)。
+
+---
+
+
 An agent skill that turns a question into a checked report — not a pile of pages.
 
 It plans sub-queries, collects a URL list, calls a fetch engine, **checks which pages were actually read**, extracts claims with verbatim quotes, verifies every quote against the saved text, and reports what it could not read.
