@@ -41,7 +41,7 @@ The dependency is one-way. The engine never calls this skill and works fine with
 
 ## Install
 
-Requires Python 3.10+ and an installed Chrome, Edge or Chromium.
+Requires Python 3.10+ and an installed Chrome, Edge or Chromium. macOS, Linux and Windows are all supported: the fetch step resolves the engine directory and the interpreter for the shell it finds — PowerShell or POSIX — instead of assuming a POSIX path.
 
 ```bash
 git clone https://github.com/AleHeinesen/research-report && cd research-report

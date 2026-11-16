@@ -68,29 +68,43 @@ Cap at the tier's limit. Prefer pages that contain the specific numbers or claus
 
 ## 3 — Fetch
 
-Locate the engine, then call it. It may sit beside this skill or in a harness skills directory:
+Locate the engine, then call it. It may sit beside this skill or in a harness skills directory; test for `scripts/batch_fetch.py`, not for the directory, in this order:
+
+| # | Candidate |
+|---|---|
+| 1 | `<skills-root>/accessing-blocked-sites` — sibling of this skill |
+| 2 | `~/.dsh/skills/accessing-blocked-sites` |
+| 3 | `~/.claude/skills/accessing-blocked-sites` |
+| 4 | `~/.cursor/skills/accessing-blocked-sites` |
+| 5 | `~/.agents/skills/accessing-blocked-sites` |
+
+`~` is `%USERPROFILE%` on Windows. If none has the file, stop and say so; do not write your own fetcher.
+
+Resolve the directory and the interpreter for the shell you are actually in. The venv sits beside the scripts and its path is platform-specific — this is the trap: `.venv/bin/python` does not exist on Windows, and there `python3` is usually the Store stub.
+
+```powershell
+$ACBS = "$env:USERPROFILE\.dsh\skills\accessing-blocked-sites"   # or the sibling / detected root
+if (-not (Test-Path "$ACBS\scripts\batch_fetch.py")) {
+  throw "accessing-blocked-sites is missing; install it: python install.py --target dsh"
+}
+$PY = "$ACBS\.venv\Scripts\python.exe"
+if (-not (Test-Path $PY)) { $PY = "python" }
+& $PY -c "import playwright"                                      # must succeed
+& $PY "$ACBS\scripts\batch_fetch.py" urls.txt -j 3 --wait 60 --out "out\<slug>"
+```
 
 ```bash
-ACBS=""
-for d in "$(dirname "<skill-dir>")/accessing-blocked-sites" \
-         "$HOME/.dsh/skills/accessing-blocked-sites" \
-         "$HOME/.claude/skills/accessing-blocked-sites" \
-         "$HOME/.cursor/skills/accessing-blocked-sites" \
-         "$HOME/.agents/skills/accessing-blocked-sites"; do
-  [ -f "$d/scripts/batch_fetch.py" ] && ACBS="$d" && break
-done
-if [ -z "$ACBS" ]; then
-  echo "accessing-blocked-sites is not installed; run: python install.py --skills acbs" >&2
+ACBS="$HOME/.dsh/skills/accessing-blocked-sites"    # or the sibling / detected root
+[ -f "$ACBS/scripts/batch_fetch.py" ] || {
+  echo "accessing-blocked-sites is missing; install it: python install.py --target dsh" >&2
   exit 2
-fi
-```
-
-Then run it with its bundled interpreter when it has one:
-
-```bash
+}
 PY="$ACBS/.venv/bin/python"; [ -x "$PY" ] || PY=python3
-"$PY" "$ACBS/scripts/batch_fetch.py" urls.txt -j 3 --wait 60 --out out/<slug>
+"$PY" -c "import playwright"                       # must succeed
+"$PY" "$ACBS/scripts/batch_fetch.py" urls.txt -j 3 --wait 60 --out "out/<slug>"
 ```
+
+If the import fails, provision Playwright (`python -m pip install playwright`) or re-run the installer. Do not improvise a different fetcher.
 
 Keep `--route auto` (the per-URL egress choice); only add `--headed` when `index.md` shows a Cloudflare challenge, since it opens windows on the user's screen.
 

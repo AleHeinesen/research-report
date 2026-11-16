@@ -26,7 +26,7 @@
 
 ## 安装
 
-需要 Python 3.10+ 和本机已装的 Chrome / Edge / Chromium。
+需要 Python 3.10+ 和本机已装的 Chrome / Edge / Chromium。macOS / Linux / Windows 都支持：抓取那一步按当前 shell（PowerShell 或 POSIX）解析引擎目录与解释器，不假设 POSIX 路径。
 
 ```bash
 git clone https://github.com/AleHeinesen/research-report && cd research-report
