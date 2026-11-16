@@ -45,6 +45,14 @@ TARGETS = {
 
 IGNORE = shutil.ignore_patterns(".venv", "__pycache__", "*.pyc", "*.pyo", ".DS_Store", ".install.json")
 
+_TEMP_DIRS: list[Path] = []
+
+
+def cleanup_temp() -> None:
+    for path in _TEMP_DIRS:
+        shutil.rmtree(path, ignore_errors=True)
+    _TEMP_DIRS.clear()
+
 
 def die(message: str) -> None:
     print(f"error: {message}", file=sys.stderr)
@@ -84,6 +92,7 @@ def looks_like_engine(repo: Path) -> bool:
 
 def clone_engine(url: str, ref: str) -> Path:
     tmp = Path(tempfile.mkdtemp(prefix="engine-"))
+    _TEMP_DIRS.append(tmp)
     log(f"  cloning {url} @ {ref}")
     try:
         subprocess.run(["git", "clone", "--quiet", "--depth", "1", "--branch", ref,
@@ -303,6 +312,7 @@ def main(argv: list[str] | None = None) -> int:
     if engine_dir:
         log(f"  health check   python {engine_dir}/scripts/check_egress.py")
         log(f"  one page       python {engine_dir}/scripts/fetch_page.py <url> out --headed")
+    cleanup_temp()
     log("  ask your agent for a researched answer; the research-report skill triggers on it")
     log("  restart the agent so it picks up the new skills")
     if args.no_engine:
